@@ -40,7 +40,7 @@ public class ClusterCreator {
         System.out.println("Starting publisher actor system ");
         String hostIp = null;
         try {
-            hostIp = InetAddress.getLocalHost().getHostAddress();
+            hostIp = InetAddress.getLocalHost().getCanonicalHostName();
         } catch (Exception e) {
             System.out.println("Unknown Host");
         }
@@ -65,7 +65,7 @@ public class ClusterCreator {
         System.out.println("Starting subscriber actor system ");
         String hostIp = null;
         try {
-            hostIp = InetAddress.getLocalHost().getHostAddress();
+            hostIp = InetAddress.getLocalHost().getCanonicalHostName();
         } catch (Exception e) {
             System.out.println("Unknown Host");
         }
