@@ -44,8 +44,8 @@ public class ClusterCreator {
         } catch (Exception e) {
             System.out.println("Unknown Host");
         }
-        Config config = ConfigFactory.parseString("akka.cluster" +
-                ".seed-nodes = [\"akka.tcp://ClusterSystem@localhost:2553\"]");
+        Config config = ConfigFactory.parseString("akka.netty.tcp.hostname = \"" + hostIp + "\",akka.cluster" +
+                ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostIp + ":2553\"]");
         publisherActorSystem = ActorSystem.create("ClusterSystem", config.withFallback(ConfigFactory.load
                 ("cluster-publisher")));
         publisherActor = publisherActorSystem.actorOf(Props.create(Publisher.class), "publisherActor");
@@ -69,8 +69,8 @@ public class ClusterCreator {
         } catch (Exception e) {
             System.out.println("Unknown Host");
         }
-        Config config = ConfigFactory.parseString("akka.cluster" +
-                ".seed-nodes = [\"akka.tcp://ClusterSystem@localhost:2553\"]");
+        Config config = ConfigFactory.parseString("akka.netty.tcp.hostname = \"" + hostIp + "\",akka.cluster" +
+                ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostIp + ":2553\"]");
         subscriberActorSystem = ActorSystem.create("ClusterSystem", config.withFallback(ConfigFactory.load
                 ("cluster-subscriber")));
         subscriberActor = subscriberActorSystem.actorOf(Props.create(Subscriber.class), "subscriberActor");
