@@ -15,10 +15,13 @@ import scala.concurrent.duration.Duration;
 
 import java.net.InetAddress;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ClusterCreator {
+    private static final Logger logger = Logger.getLogger(ClusterCreator.class.getName());
     public ActorRef publisherActor;
     public ActorRef subscriberActor;
     private static ClusterCreator instance = null;
@@ -37,19 +40,19 @@ public class ClusterCreator {
     }
 
     public void startPublisherActorSystem() {
-        System.out.println("Starting publisher actor system ");
-        String hostIp = null;
+        logger.info("Starting publisher actor system ");
+        String hostName = null;
         try {
-            hostIp = InetAddress.getLocalHost().getCanonicalHostName();
+            hostName = InetAddress.getLocalHost().getCanonicalHostName();
         } catch (Exception e) {
-            System.out.println("Unknown Host");
+            logger.log(Level.SEVERE, "Unknown host", e);
         }
-        Config config = ConfigFactory.parseString("akka.netty.tcp.hostname = \"" + hostIp + "\",akka.cluster" +
-                ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostIp + ":2553\"]");
+        Config config = ConfigFactory.parseString("akka.netty.tcp.hostname = \"" + hostName + "\",akka.cluster" +
+                ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostName + ":2553\"]");
         publisherActorSystem = ActorSystem.create("ClusterSystem", config.withFallback(ConfigFactory.load
                 ("cluster-publisher")));
         publisherActor = publisherActorSystem.actorOf(Props.create(Publisher.class), "publisherActor");
-        System.out.println("Started publisher actor system ");
+        logger.info("Started publisher actor system ");
 
         publisherActorSystem.scheduler().schedule(Duration.create(10, SECONDS),
                 Duration.create(10, SECONDS), new Runnable() {
@@ -62,18 +65,18 @@ public class ClusterCreator {
     }
 
     public void startSubscriberActorSystem() {
-        System.out.println("Starting subscriber actor system ");
-        String hostIp = null;
+        logger.info("Starting subscriber actor system ");
+        String hostName = null;
         try {
-            hostIp = InetAddress.getLocalHost().getCanonicalHostName();
+            hostName = InetAddress.getLocalHost().getCanonicalHostName();
         } catch (Exception e) {
-            System.out.println("Unknown Host");
+            logger.log(Level.SEVERE, "Unknown host", e);
         }
-        Config config = ConfigFactory.parseString("akka.netty.tcp.hostname = \"" + hostIp + "\",akka.cluster" +
-                ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostIp + ":2553\"]");
+        Config config = ConfigFactory.parseString("akka.netty.tcp.hostname = \"" + hostName + "\",akka.cluster" +
+                ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostName + ":2553\"]");
         subscriberActorSystem = ActorSystem.create("ClusterSystem", config.withFallback(ConfigFactory.load
                 ("cluster-subscriber")));
         subscriberActor = subscriberActorSystem.actorOf(Props.create(Subscriber.class), "subscriberActor");
-        System.out.println("Started subscriber actor system ");
+        logger.info("Started subscriber actor system ");
     }
 }
