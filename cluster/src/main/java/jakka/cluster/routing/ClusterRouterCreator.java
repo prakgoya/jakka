@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ClusterRouterCreator {
-    private static final Logger logger = Logger.getLogger(jakka.cluster.demo.ClusterCreator.class.getName());
+    private static final Logger logger = Logger.getLogger(ClusterRouterCreator.class.getName());
     public ActorRef publisherActor;
     public ActorRef subscriberActor;
     private static ClusterRouterCreator instance = null;
