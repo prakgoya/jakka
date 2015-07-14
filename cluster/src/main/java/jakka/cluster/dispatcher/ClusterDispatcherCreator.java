@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ClusterDispatcherCreator {
     private static final Logger logger = Logger.getLogger(ClusterDispatcherCreator.class.getName());
@@ -52,11 +53,11 @@ public class ClusterDispatcherCreator {
                 ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostAddress + ":2553\"]");
         publisherActorSystem = ActorSystem.create("ClusterSystem", config.withFallback(ConfigFactory.load
                 ("cluster-publisher")));
-        publisherActor = publisherActorSystem.actorOf(new BalancingPool(5).props(Props.create(Publisher.class)), "publisherActor");
+        publisherActor = publisherActorSystem.actorOf(new RoundRobinPool(10).props(Props.create(Publisher.class)), "publisherActor");
         logger.info("Started publisher actor system ");
 
         publisherActorSystem.scheduler().schedule(Duration.create(3, SECONDS),
-                Duration.create(1, SECONDS), new Runnable() {
+                Duration.create(10, MILLISECONDS), new Runnable() {
                     public void run() {
                         String uuid = UUID.randomUUID().toString();
                         publisherActor.tell(uuid, null);
@@ -77,7 +78,7 @@ public class ClusterDispatcherCreator {
                 ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostAddress + ":2553\"]");
         subscriberActorSystem = ActorSystem.create("ClusterSystem", config.withFallback(ConfigFactory.load
                 ("cluster-subscriber")));
-        subscriberActor = subscriberActorSystem.actorOf(new BalancingPool(5).props(Props.create(Subscriber.class)),
+        subscriberActor = subscriberActorSystem.actorOf(Props.create(Subscriber.class),
                 "subscriberActor");
         logger.info("Started subscriber actor system ");
     }
