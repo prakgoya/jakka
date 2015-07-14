@@ -41,14 +41,14 @@ public class ClusterCreator {
 
     public void startPublisherActorSystem() {
         logger.info("Starting publisher actor system ");
-        String hostName = null;
+        String hostAddress = null;
         try {
-            hostName = InetAddress.getLocalHost().getCanonicalHostName();
+            hostAddress = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Unknown host", e);
         }
-        Config config = ConfigFactory.parseString("akka.netty.tcp.hostname = \"" + hostName + "\",akka.cluster" +
-                ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostName + ":2553\"]");
+        Config config = ConfigFactory.parseString("akka.netty.tcp.hostname = \"" + hostAddress + "\",akka.cluster" +
+                ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostAddress + ":2553\"]");
         publisherActorSystem = ActorSystem.create("ClusterSystem", config.withFallback(ConfigFactory.load
                 ("cluster-publisher")));
         publisherActor = publisherActorSystem.actorOf(Props.create(Publisher.class), "publisherActor");
@@ -66,14 +66,14 @@ public class ClusterCreator {
 
     public void startSubscriberActorSystem() {
         logger.info("Starting subscriber actor system ");
-        String hostName = null;
+        String hostAddress = null;
         try {
-            hostName = InetAddress.getLocalHost().getCanonicalHostName();
+            hostAddress = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Unknown host", e);
         }
-        Config config = ConfigFactory.parseString("akka.netty.tcp.hostname = \"" + hostName + "\",akka.cluster" +
-                ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostName + ":2553\"]");
+        Config config = ConfigFactory.parseString("akka.netty.tcp.hostname = \"" + hostAddress + "\",akka.cluster" +
+                ".seed-nodes = [\"akka.tcp://ClusterSystem@" + hostAddress + ":2553\"]");
         subscriberActorSystem = ActorSystem.create("ClusterSystem", config.withFallback(ConfigFactory.load
                 ("cluster-subscriber")));
         subscriberActor = subscriberActorSystem.actorOf(Props.create(Subscriber.class), "subscriberActor");
